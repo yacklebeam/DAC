@@ -277,6 +277,7 @@ public class RPCHandler {
 		}
 		io.write(ShutdownRpc.CHALLENGE);
 		String handshake = io.read();
+		System.out.println(handshake);
 		if(!handshake.equals(ShutdownRpc.HANDSHAKE)){
 			DBP.printerrorln("Shutdown request was recieved but sender was unable to handshake. "
 					+ "It is possible that this was an attempted loopback spoofing attack.");

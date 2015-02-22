@@ -7,7 +7,6 @@ import blackdoor.cqbe.addressing.Address.OverlayComparator;
 import blackdoor.cqbe.addressing.L3Address;
 import blackdoor.cqbe.node.server.Server;
 import blackdoor.cqbe.node.server.ServerException;
-
 import blackdoor.cqbe.settings.Config;
 import blackdoor.cqbe.storage.StorageController;
 import blackdoor.util.DBP;
@@ -28,7 +27,7 @@ public class Node {
 	private Updater updater;
 	private AddressTable addressTable;
 	private StorageController storageController;
-	private volatile int n = Address.ADDRESS_SIZE;
+	private volatile int n = Address.DEFAULT_ADDRESS_SIZE;
 	private volatile int o;
 
 	private volatile L3Address me;
@@ -105,10 +104,11 @@ public class Node {
 		InetAddress address;
 		try {
 
-			URL whatismyip = new URL("http://checkip.amazonaws.com");
-			BufferedReader in = new BufferedReader(new InputStreamReader(
-					whatismyip.openStream()));
-			address = InetAddress.getByName(in.readLine());
+//			URL whatismyip = new URL("http://checkip.amazonaws.com");
+//			BufferedReader in = new BufferedReader(new InputStreamReader(
+//					whatismyip.openStream()));
+//			address = InetAddress.getByName(in.readLine());
+			address = InetAddress.getByName("192.168.1.10");
 
 			me = new L3Address(address, port);
 			addressTable = new AddressTable(me);
@@ -245,7 +245,7 @@ public class Node {
 			}
 			Node.singleton = node;
 			node.startServer(port);
-			node.startUpdater();
+			//node.startUpdater();
 			return Node.getInstance();
 		}
 

@@ -16,13 +16,13 @@ import blackdoor.cqbe.output_logic.Router;
 public class PullTesterServer {
 
 	public static void main(String[] args) throws Exception, IOException {
-		InetAddress address;
-
-		URL whatismyip = new URL("http://checkip.amazonaws.com");
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				whatismyip.openStream()));
-		address = InetAddress.getByName(in.readLine());
-		
+//		InetAddress address;
+//
+//		URL whatismyip = new URL("http://checkip.amazonaws.com");
+//		BufferedReader in = new BufferedReader(new InputStreamReader(
+//				whatismyip.openStream()));
+//		address = InetAddress.getByName(in.readLine());
+		InetAddress address = InetAddress.getByName("192.168.1.10");
 		
 		L3Address neighbor = new L3Address(address, 1778);
 		NodeBuilder node = new NodeBuilder();

@@ -3,7 +3,9 @@ package blackdoor.cqbe.test;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.NavigableSet;
 
+import blackdoor.cqbe.addressing.Address;
 import blackdoor.cqbe.addressing.CASFileAddress;
 import blackdoor.cqbe.addressing.L3Address;
 import blackdoor.cqbe.node.Node;
@@ -19,9 +21,11 @@ public class PullTesterCliant {
 		node.buildNode();
 		Node.getAddressTable().add(new L3Address(InetAddress.getByName("127.0.0.1"), 1778));
 		StorageController c = Node.getStorageController();
-		for(int i = 0; i<11; i++){
-			c.put(new CASFileAddress(new File("NodeStorage/"+new Integer(i).toString()+".boop")));
-		}
-		//System.out.println(c.getBucket(1));
+		c.put(new CASFileAddress(new File("NodeStorage/8.boop")));
+		c.put(new CASFileAddress(new File("NodeStorage/9.boop")));
+		NavigableSet<Address> keys = c.getBucket(1);
+		for (Address key: keys){
+			 System.out.println(key);
+		 }
 	}
 }
