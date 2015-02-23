@@ -104,11 +104,10 @@ public class Node {
 		InetAddress address;
 		try {
 
-//			URL whatismyip = new URL("http://checkip.amazonaws.com");
-//			BufferedReader in = new BufferedReader(new InputStreamReader(
-//					whatismyip.openStream()));
-//			address = InetAddress.getByName(in.readLine());
-			address = InetAddress.getByName("192.168.1.10");
+			URL whatismyip = new URL("http://checkip.amazonaws.com");
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					whatismyip.openStream()));
+			address = InetAddress.getByName(in.readLine());
 
 			me = new L3Address(address, port);
 			addressTable = new AddressTable(me);

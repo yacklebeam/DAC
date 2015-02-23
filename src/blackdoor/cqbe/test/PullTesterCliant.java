@@ -19,13 +19,10 @@ public class PullTesterCliant {
 		//node.setBootstrapNode(new L3Address(InetAddress.getByName("127.0.0.1"), 1778));
 		node.setPort(1778);
 		node.buildNode();
-		Node.getAddressTable().add(new L3Address(InetAddress.getByName("127.0.0.1"), 1778));
+		Node.getAddressTable().add(new L3Address(InetAddress.getByName("192.168.5.2"), 1775));
 		StorageController c = Node.getStorageController();
-		c.put(new CASFileAddress(new File("NodeStorage/8.boop")));
-		c.put(new CASFileAddress(new File("NodeStorage/9.boop")));
-		NavigableSet<Address> keys = c.getBucket(1);
-		for (Address key: keys){
-			 System.out.println(key);
-		 }
+		for(int i = 0; i<10; i++){
+			c.put(new CASFileAddress(new File("NodeStorage/"+new Integer(i).toString()+".boop")));
+		}
 	}
 }
