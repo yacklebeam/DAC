@@ -84,6 +84,8 @@ public class dh256 {
 					.setMultipleAllowed(false).setTakesValue(true));
 			clp.addArgument(new Argument().setLongOption("adam").setOption("a")
 					.setMultipleAllowed(false));
+			clp.addArgument(new Argument().setLongOption("daemon").setOption("de")
+					.setMultipleAllowed(false));
 			clp.addArgument(new Argument().setLongOption("dir").setOption("d")
 					.setMultipleAllowed(false).setTakesValue(true));
 			clp.addArgument(new Argument().setLongOption("log").setOption("l")
@@ -94,8 +96,6 @@ public class dh256 {
 			clp.addArgument(new Argument().setLongOption("revive")
 					.setOption("r").setMultipleAllowed(false)
 					.setTakesValue(true));
-			clp.addArgument(new Argument().setLongOption("daemon")
-					.setOption("dm").setMultipleAllowed(false));
 			Map<String, Argument> out = clp.parseArgs(args);
 			if (out.containsKey("help")) {
 				System.out.println(clp.getHelpText());
