@@ -2,8 +2,12 @@ package blackdoor.cqbe.node;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -15,12 +19,12 @@ import blackdoor.util.DBP.SingletonAlreadyInitializedException;
 
 public class NodeTest {
 	
-	@Before
-	public void setUp() throws Exception {
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
 		createNode();
 	}
 
-	private void createNode() throws NodeException, ServerException, SingletonAlreadyInitializedException {
+	private static void createNode() throws NodeException, ServerException, SingletonAlreadyInitializedException, IOException {
 		NodeBuilder node = new NodeBuilder();
 		node.setAdam(true);
 		node.buildNode();
@@ -80,8 +84,8 @@ public class NodeTest {
 		fail("Not yet implemented");
 	}
 	
-	@After
-	public void shutDown() {
+	@AfterClass
+	public static void shutDown() {
 		Node.shutdown();
 	}
 

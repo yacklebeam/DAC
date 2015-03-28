@@ -133,7 +133,7 @@ public enum Node {
 	public static void shutdown() {
 		Node inst = getInstance();
 		inst.server.stop();
-		inst.updater.stop();
+		//inst.updater.stop();
 	}
 
 	/**
@@ -274,7 +274,7 @@ public enum Node {
 			node.config = config;
 			Node.singleton = node;
 			node.startServer(port);
-			node.startUpdater();
+			//node.startUpdater();
 			return Node.getInstance();
 		}
 
