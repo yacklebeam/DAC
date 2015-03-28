@@ -139,7 +139,7 @@ public class RPCValidator {
 		if (!matcher.matches()) {
 			return "params";
 		}
-		if (port < 0 || port > 61001) {
+		if (port <= 0 || port > 61001) {
 			return "params";
 		}
 

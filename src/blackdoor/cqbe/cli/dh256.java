@@ -250,7 +250,7 @@ public class dh256 {
 				}
 				Address a = new Address(parsedArgs.get("fileoaddress").getValues().get(0));
 				byte[] response = router.get(a);
-				File fileDir = new File(parsedArgs.get("dir").getValue());
+				File fileDir = new File(parsedArgs.get("dir").getValues().get(0));
 				new CASFileAddress(fileDir, response);
 				if(existsAndReadable(fileDir))
 					System.out.println("the file was retrived to the specified directory successfully");
