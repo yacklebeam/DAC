@@ -26,10 +26,7 @@ public abstract class FileAddress extends Address {
 	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((f == null) ? 0 : f.hashCode());
-		return result;
+		return super.hashCode();
 	}
 
 	/* (non-Javadoc)
@@ -37,17 +34,7 @@ public abstract class FileAddress extends Address {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		FileAddress other = (FileAddress) obj;
-		if (f == null) {
-			if (other.f != null)
-				return false;
-		} else if (!f.equals(other.f))
-			return false;
-		return true;
+		return super.equals(obj);
 	}
     
     

@@ -29,6 +29,7 @@ public class dh256 {
 	 *            command line args
 	 */
 	public static void main(String[] args) {
+		DBP.DEMO = true;
 		try {
 			CommandLineParser clp = new CommandLineParser();
 			clp.setExecutableName("dh256");
@@ -45,7 +46,7 @@ public class dh256 {
 				case "retrieve":
 					dh256.retrieve(args2);
 					break;
-				case "leave":
+				case "shutdown":
 					dh256.shutdown(args2);
 					break;
 				case "join":
@@ -85,6 +86,8 @@ public class dh256 {
 					.setMultipleAllowed(false));
 			clp.addArgument(new Argument().setLongOption("dir").setOption("d")
 					.setMultipleAllowed(false).setTakesValue(true));
+			clp.addArgument(new Argument().setLongOption("log").setOption("l")
+					.setMultipleAllowed(false).setTakesValue(true));
 			clp.addArgument(new Argument().setLongOption("settings")
 					.setOption("s").setMultipleAllowed(false)
 					.setTakesValue(true));
@@ -112,6 +115,10 @@ public class dh256 {
 				if (out.containsKey("dir")) {
 					String dir = out.get("dir").getValues().get(0);
 					node.setStorageDir(dir);
+				}
+				if (out.containsKey("log")) {
+					String log = out.get("log").getValues().get(0);
+					node.setLogDir(log);
 				}
 				if (out.containsKey("daemon")) {
 					node.setDaemon(true);
@@ -157,7 +164,7 @@ public class dh256 {
 			if (out.containsKey("help")) {
 				System.out.println(clp.getHelpText());
 			} else {
-				File file = new File(out.get("file").getValue());
+				File file = new File(out.get("file").getValues().get(0));
 				if (!existsAndReadable(file)) {
 					System.out
 							.println("specified file does not exist or we lack read permissions");
@@ -177,7 +184,7 @@ public class dh256 {
 					router = Router.fromDefaultLocalNode();
 				}
 				int numberStored = router.put(fileAddress, fileBytes);
-				if(numberStored < 0)
+				if(numberStored > 0)
 					System.out.println("file added successfully by "+ numberStored +" nodes with address: " + fileAddress.overlayAddressToString());
 				else
 					System.out.println("the file was not added");
@@ -229,7 +236,7 @@ public class dh256 {
 			if (parsedArgs.containsKey("help")) {
 				System.out.println(clp.getHelpText());
 			}
-			if (parsedArgs.containsKey("fileOAddress")){
+			if (parsedArgs.containsKey("fileoaddress")){
 				Router router;
 				if (parsedArgs.containsKey("bootstrap")) {
 					String bootstrap = parsedArgs.get("bootstrap").getValues().get(0);
@@ -241,7 +248,7 @@ public class dh256 {
 				} else {
 					router = Router.fromDefaultLocalNode();
 				}
-				Address a = new Address(parsedArgs.get("fileOAddress").getValues().get(0));
+				Address a = new Address(parsedArgs.get("fileoaddress").getValues().get(0));
 				byte[] response = router.get(a);
 				File fileDir = new File(parsedArgs.get("dir").getValue());
 				new CASFileAddress(fileDir, response);

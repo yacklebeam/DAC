@@ -12,6 +12,7 @@ import blackdoor.cqbe.rpc.GETResponse;
 import blackdoor.cqbe.rpc.GETResponse.GETResponseFactory;
 import blackdoor.cqbe.rpc.RPCBuilder;
 import blackdoor.cqbe.rpc.RPCException;
+import blackdoor.cqbe.rpc.ShutdownRpc;
 import blackdoor.cqbe.rpc.RPCException.*;
 import blackdoor.cqbe.rpc.RPCValidator;
 
@@ -117,16 +118,19 @@ public class Router {
 	 * @throws RPCException 
 	 * @throws IOException 
 	 */
-	public static boolean ping(L3Address remoteNode) throws RPCException, IOException{
+	public static boolean ping(L3Address remoteNode) throws RPCException{
 		RPCBuilder requestBuilder = new RPCBuilder();
 		L3Address source = getSource();
 		JSONObject request;
-		
+		try {
 		requestBuilder.setDestinationO(remoteNode);
 		requestBuilder.setSourceIP(source.getLayer3Address());
 		requestBuilder.setSourcePort(source.getPort());
 		request = requestBuilder.buildPING();
 		return RPCValidator.isValidoopResponse(call(remoteNode, request));
+		} catch(IOException e) {
+			return false;
+		}
 	}
 	
 	private static L3Address getSource(){
@@ -143,6 +147,15 @@ public class Router {
 		return new L3Address(sourceIP, sourcePort);
 	}
 	
+	/**
+	 * Sends a get request to remoteNode either for the value of destination or the keys stored by remoteNode in their index bucket.
+	 * @param remoteNode
+	 * @param destination
+	 * @param index
+	 * @return
+	 * @throws RPCException
+	 * @throws IOException
+	 */
 	public static GETResponse primitiveGet(L3Address remoteNode, Address destination, int index) throws RPCException, IOException{
 		JSONObject requestObject = null;
 		JSONObject responseObject = null;
@@ -194,6 +207,14 @@ public class Router {
 		}else return null;
 	}
 	
+	/**
+	 * Retrieves the value for destination (which is a key).
+	 * This method sends get requests to multiple nodes and returns the most popular value.
+	 * @param destination
+	 * @return
+	 * @throws RPCException
+	 * @throws IOException
+	 */
 	public byte[] get(Address destination) throws RPCException, IOException{
 		AddressTable neighbors = iterativeLookup(destination);
 		HashMap<byte[], Integer> counts = new HashMap<byte[], Integer>();
@@ -314,6 +335,7 @@ public class Router {
 			throw new RPCException(JSONRPCError.PARSE_ERROR);
 		}
 		io.close();
+		ret.add(remoteNode);
 		return ret;
 	}
 	
@@ -411,8 +433,10 @@ public class Router {
 		return null;
 	}
 
-	public static void shutDown(int port) {
-		// TODO Auto-generated method stub
-		
+	public static void shutDown(int port) throws IOException {
+		SocketIOWrapper io = new SocketIOWrapper(new Socket(InetAddress.getLoopbackAddress(), port));
+		io.write(ShutdownRpc.getShutdownRPC().toJSONString());
+		//should I read here?
+		io.write(ShutdownRpc.HANDSHAKE);
 	}
 }

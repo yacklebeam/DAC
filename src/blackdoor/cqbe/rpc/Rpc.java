@@ -35,8 +35,19 @@ public abstract class Rpc {
 				}
 				break;
 			case "SHUTDOWN":
-				break;
+				rpcObject = new ShutdownRpc(rpcJson.toString());
+				return rpcObject;
 			case "GET":
+				rpcObject = new GetRpc();
+				GetRpc rpcGetObject = (GetRpc) rpcObject;
+				try {
+					rpcGetObject.index = rpcJson.getJSONObject("params")
+							.getInt("index");
+				}
+				catch (JSONException e){
+					throw new RPCException(JSONRPCError.INVALID_PARAMS);
+				}
+				rpcObject.method = Method.GET;
 				break;
 			case "PING":
 				rpcObject = new PingRpc();
@@ -67,10 +78,12 @@ public abstract class Rpc {
 	   }catch(JSONException e){
 		   throw new RPCException(JSONRPCError.PARSE_ERROR);
 	   }
+
 	   return fromJson(rpcJson);
+
    }
    
-   private static void populateCommonFields(Rpc rpcObject, JSONObject rpcJson) throws RPCException{
+   protected static void populateCommonFields(Rpc rpcObject, JSONObject rpcJson) throws RPCException{
 	   try{
 		   JSONObject params = rpcJson.getJSONObject("params");
 		   rpcObject.source = new L3Address(InetAddress.getByName(params.getString("sourceIP")), params.getInt("sourcePort"));
@@ -146,6 +159,7 @@ public abstract class Rpc {
 	public int getId() {
 		return id;
 	}
+
 
    protected JSONObject getRpcOuterShell(){
 	   JSONObject shell = new JSONObject();

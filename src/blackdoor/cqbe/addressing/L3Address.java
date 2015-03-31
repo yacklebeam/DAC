@@ -24,7 +24,29 @@ public class L3Address extends Address implements Serializable{
 	private InetAddress l3Address = null;
 	private int port = -1;
 	private static L3Address nonNodeAddress = null;
+	protected static final boolean LOOPBACK_IS_NON_NODE = true; 
 	
+	/**
+	 * Returns true if address is definitely not the overlay address of a node
+	 * @param address
+	 * @return true if address is definitely not the overlay address of a node
+	 */
+	public static boolean isNonNodeAddress(L3Address address){
+		if(Address.isNonNodeAddress(address) ||
+				(isLoopbackAddress(address) && LOOPBACK_IS_NON_NODE) ||
+				address.equals(getNonNodeAddress()))
+			return true;
+		return false;
+	}
+	
+	public static boolean isLoopbackAddress(L3Address address){
+		return address.getLayer3Address().isLoopbackAddress();
+	}
+	
+	/**
+	 * Returns an address that other nodes will recognize is not the address of a node
+	 * @return an address that other nodes will recognize is not the address of a node
+	 */
 	public static L3Address getNonNodeAddress(){
 		if(nonNodeAddress != null)
 			return nonNodeAddress;
@@ -48,12 +70,23 @@ public class L3Address extends Address implements Serializable{
 		setLayer3(a, port);
 	}
 	
+	/**
+	 * Parses a JSONObject into an L3Address object. The JSONObject should contain an "IP" field, and a "port" field.
+	 * @param js
+	 * @return an L3Address object based on js
+	 * @throws UnknownHostException
+	 * @throws JSONException
+	 */
 	public static L3Address fromJSON(JSONObject js) throws UnknownHostException, JSONException{
 		InetAddress l3Address = InetAddress.getByName(js.getString("IP"));
 		int port = js.getInt("port");
 		return new L3Address(l3Address, port);
 	}
 	
+	/**
+	 * 
+	 * @return a JSONObject representing this L3Address
+	 */
 	public JSONObject toJSON(){
 		JSONObject ret = new JSONObject();
 		ret.put("IP", l3Address.getHostAddress());
@@ -61,6 +94,10 @@ public class L3Address extends Address implements Serializable{
 		return ret;
 	}
 	
+	/**
+	 * 
+	 * @return a JSON string representing this L3Address
+	 */
 	public String toJSONString(){
 		return toJSON().toString();
 	}
@@ -88,7 +125,9 @@ public class L3Address extends Address implements Serializable{
 		byte[] overlay = new byte[l3Bytes.length + portBytes.length];
 		System.arraycopy(l3Bytes, 0, overlay, 0, l3Bytes.length);
 		System.arraycopy(portBytes, 0, overlay, l3Bytes.length, portBytes.length);
-		overlayAddress = Hash.getSHA256(overlay, true);
+
+		setOverlayAddress(Hash.getSHA256(overlay, false));
+
 	}
 
 	/**
@@ -101,7 +140,7 @@ public class L3Address extends Address implements Serializable{
 
 	/**
 	 *
-	 * @return
+	 * @return this L3Address's port
 	 */
 	public int getPort(){
 		return port;
@@ -113,24 +152,19 @@ public class L3Address extends Address implements Serializable{
 	 * @return the ip and port in the format ip : port
 	 */
 	public String l3ToString(){
-		return l3Address.getHostAddress() + " : " + port;
+		return l3Address.getHostAddress() + ":" + port;
 	}
+	
+	public int hashCode() {
+		return super.hashCode();
+	};
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		L3Address other = (L3Address) obj;
-		if (!Arrays.equals(overlayAddress, other.overlayAddress))
-			return false;
-		return true;
+		return super.equals(obj);
 	}
 
 	/* (non-Javadoc)
@@ -138,7 +172,6 @@ public class L3Address extends Address implements Serializable{
 	 */
 	@Override
 	public String toString() {
-		return "L3Address [overlayAddress=" + overlayAddressToString()
-				+ ", l3Address : port = " + l3ToString() + "]";
+		return "L3Address [l3Address = " + l3ToString() + ", overlayAddress=" + overlayAddressToString() + "]";
 	}
 }

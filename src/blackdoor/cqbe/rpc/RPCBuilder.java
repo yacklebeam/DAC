@@ -59,7 +59,7 @@ public class RPCBuilder {
 		else{
 			JSONObject rpc = new JSONObject();
 			rpc.put("jsonrpc", "2.0");
-			rpc.put("method", "get");
+			rpc.put("method", "GET");
 			JSONObject params = getDefaultParams();
 			params.put("index", index);
 			JSONObject extensions = new JSONObject();
@@ -68,6 +68,16 @@ public class RPCBuilder {
 			rpc.put("id", id);
 			return rpc;
 		}
+	}
+	
+	public GetRpc buildGetObject(){
+		if(destinationO == null || sourceIP == null|| sourcePort == -1|| index == -1)
+			throw new RPCException.RPCCreationException("not enough parameters set");
+		GetRpc ret = new GetRpc();
+		ret.setDestination(getDestinationO());
+		ret.setSource(new L3Address(getSourceIP(), getSourcePort()));
+		ret.index = getIndex();
+		return ret;
 	}
 
 	/**
@@ -82,7 +92,7 @@ public class RPCBuilder {
 		else{
 			JSONObject rpc = new JSONObject();
 			rpc.put("jsonrpc", "2.0");
-			rpc.put("method", "put");
+			rpc.put("method", "PUT");
 			JSONObject params = getDefaultParams();
 			params.put("value", Base64.encode(value));
 			JSONObject extensions = new JSONObject();
@@ -113,7 +123,7 @@ public class RPCBuilder {
 		{
 			JSONObject rpc = new JSONObject();
 			rpc.put("jsonrpc", "2.0");
-			rpc.put("method", "lookup");
+			rpc.put("method", "LOOKUP");
 			JSONObject params = getDefaultParams();
 			JSONObject extensions = new JSONObject();
 			params.put("extensions", extensions);
@@ -151,7 +161,7 @@ public class RPCBuilder {
 		else{
 			JSONObject rpc = new JSONObject();
 			rpc.put("jsonrpc", "2.0");
-			rpc.put("method", "ping");
+			rpc.put("method", "PING");
 			JSONObject params = getDefaultParams();
 			JSONObject extensions = new JSONObject();
 			params.put("extensions", extensions);
@@ -181,7 +191,7 @@ public class RPCBuilder {
 		else{
 			JSONObject rpc = new JSONObject();
 			rpc.put("jsonrpc", "2.0");
-			rpc.put("method", "shutdown");
+			rpc.put("method", "SHUTDOWN");
 			JSONObject params = getDefaultParams();
 			JSONObject extensions = new JSONObject();
 			params.put("extensions", extensions);

@@ -16,7 +16,7 @@ public class CASFileAddress extends FileAddress {
 	
 	public CASFileAddress(File f) throws IOException {
 		super.f = f;
-		overlayAddress = Hash.getFileHash(f);
+		setOverlayAddress(Hash.getFileHash(f));
 	}
 	
 	/**
@@ -29,7 +29,7 @@ public class CASFileAddress extends FileAddress {
 	public CASFileAddress(File f, byte[] bin) throws IOException{
 		Files.write(f.toPath(), bin, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
 		super.f = f;
-		overlayAddress = Hash.getFileHash(f);
+		setOverlayAddress(Hash.getFileHash(f));
 	}
 	
 	/**
@@ -39,7 +39,7 @@ public class CASFileAddress extends FileAddress {
 	 * @throws IOException 
 	 */
 	public CASFileAddress(Path folder, byte[] bin) throws IOException{
-		super.setOverlayAddress(Hash.getSHA256(bin, true));
+		super.setOverlayAddress(Hash.getSHA256(bin, false));
 		File f = new File(folder.toFile(), Misc.getHexBytes(getOverlayAddress(), "_").substring(0, FILE_NAME_LEN));
 		Files.write(f.toPath(), bin, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
 		super.setFile(f);

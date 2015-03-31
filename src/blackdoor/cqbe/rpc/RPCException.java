@@ -3,6 +3,11 @@ package blackdoor.cqbe.rpc;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * An Exception that can be thrown if a fatal RPC error has occurred. These exceptions should only be handled by the method that is prepared to send a JSON RPC Error response to the caller. 
+ * @author nfischer3
+ *
+ */
 public class RPCException extends Exception {
 
 	RPCException.JSONRPCError e;
@@ -19,6 +24,18 @@ public class RPCException extends Exception {
 			super(message);
 		}
 	}
+	
+	
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "RPCException [e=" + e + " " + e.getCode() + " " + e.getMessage() +"]";
+	}
+
+
 
 	/**
 	 * An enumeration of all the possible JSON RPC error objects supported by this system.
@@ -63,7 +80,26 @@ public class RPCException extends Exception {
 		 * The result member of a JSON RPC response did not contain an acceptable type or value.
 		 * This error should not be put into RPC requests.
 		 */
-		 INVALID_RESULT(-32003, "Invalid RPC result");
+		 INVALID_RESULT(-32003, "Invalid RPC result"),
+		/**
+		 * Unable to retriece the corresponding value from storage
+		 */
+		 NODE_STORAGE_ERROR(-32004, "Unable to retrieve this value from storage"),
+		 /**
+		  * A shutdown request was received, but it did not come over the loopback interface.
+		  */
+		 NON_LO_SHUTDOWN(-32005, "Shutdown requests must come from the loopback network interface"),
+		 /**
+		  * Response object from node was not a valid JSON-RPC 2.0 response.
+		  * This error should never go into a response.
+		  */
+		 INVALID_RESPONSE(-32006, "Response object from node was not a valid JSON-RPC 2.0 response"),
+		 /*
+		  * Result type indicator was missing
+		  * Were you trying to parse a response created by an older version using a newer parser? Older parsers are fowards compatible but new parsers are not backwards compatible.
+		  * This error should never go into a response.
+		  */
+		 MISSING_RESULT_TYPE(-32007, "Result type indicator was missing");
 
 		/**
 		 * get a JSONRPCError java object from a JSONRPC error object
