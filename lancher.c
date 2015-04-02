@@ -27,7 +27,7 @@ int main (int argc, char **argv)
    chdir (path);
    char command[1024];
    int i;
-   strcpy( command, "java -jar dh256.jar" );
+   strcpy( command, "java -jar bin/dh256.jar" );
    for (i = 1; i < argc; i ++)
    {
    	  strcat(command, " ");

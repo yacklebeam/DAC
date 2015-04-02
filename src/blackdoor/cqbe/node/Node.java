@@ -132,8 +132,8 @@ public enum Node {
 
 	public static void shutdown() {
 		Node inst = getInstance();
+		inst.updater.stop();
 		inst.server.stop();
-		//inst.updater.stop();
 	}
 
 	/**
@@ -253,9 +253,9 @@ public enum Node {
 				List<String> commands = new ArrayList<String>();
 				commands.add("java");
 				commands.add("-jar");
-				commands.add("dh256");
+				commands.add("dh256.jar");
 				commands.add("join");
-				commands.add("-d");
+				commands.add("-s");
 				commands.add((String) config.get("save_file"));
 				ProcessBuilder pb = new ProcessBuilder(commands);
 				pb.start();
@@ -274,7 +274,7 @@ public enum Node {
 			node.config = config;
 			Node.singleton = node;
 			node.startServer(port);
-			//node.startUpdater();
+			node.startUpdater();
 			return Node.getInstance();
 		}
 
