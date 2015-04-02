@@ -1,0 +1,12 @@
+---
+- hosts: adam
+  gather_facts: no
+  tasks:
+    - name: Starting Adam Node
+      shell: ./dh256 
+- wait_for: delay=10
+- hosts: pitower
+  gather_facts: no
+  tasks:
+    - name: Starting rest of the Network to join adam!
+      shell: ./dh256 

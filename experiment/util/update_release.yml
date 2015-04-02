@@ -1,0 +1,15 @@
+---
+- hosts: picluster
+  gather_facts: no
+  tasks:
+  - name: Removing older Release
+    shell: rm -rf ~/run.dh256
+  - name: Create new Run Dir
+    shell: mkdir ~/run.dh256
+  - name: Copy New Release Over
+    copy: 
+       src: ../noderelease/
+       dest: ~/run.dh256
+       owner: cube 
+  - name: Compiling Launcher
+    shell: gcc -o dh256 launcher.c
