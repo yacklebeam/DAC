@@ -1,0 +1,6 @@
+---
+- hosts: pitower
+  gather_facts: no
+  tasks:
+    - name: Kill All Nodes in Network
+      shell: ./run.dh256/dh256 
