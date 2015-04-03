@@ -3,10 +3,9 @@
   gather_facts: no
   tasks:
     - name: Starting Adam Node
-      shell: ./run.dh256/dh256 
-- wait_for: delay=10
+      shell: java -jar ~/run.dh256/dh256.jar join -a 
 - hosts: pitower
   gather_facts: no
   tasks:
     - name: Starting rest of the Network to join adam!
-      shell: ./run.dh256/dh256 
+      shell: java -jar ~/run.dh256/dh256.jar 147.222.164.101:1776

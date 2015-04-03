@@ -1,6 +1,7 @@
 ---
-- hosts: pitower
+- hosts: picluster
   gather_facts: no
   tasks:
     - name: Kill All Nodes in Network
-      shell: ./run.dh256/dh256 
+      shell: java -jar ~/run.dh256/dh256.jar shutdown -p 1776
+
