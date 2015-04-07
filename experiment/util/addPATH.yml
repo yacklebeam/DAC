@@ -1,0 +1,6 @@
+---
+- hosts: picluster
+  gather_facts: no
+  tasks:
+    - name: GAR
+      shell: . /home/cube/.profile

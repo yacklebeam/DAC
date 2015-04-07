@@ -1,11 +1,22 @@
 ---
-- hosts: adam
-  gather_facts: no
-  tasks:
-    - name: Starting Adam Node
-      shell: java -jar ~/run.dh256/dh256.jar join -a 
+# - hosts: adam
+#   gather_facts: no
+#   tasks:
+#     - name: Starting Adam Node
+#       shell:  java -jar bin/dh256.jar join -a -de 
+#       args:
+#          chdir: /home/cube/run.dh256/
 - hosts: pitower
   gather_facts: no
   tasks:
     - name: Starting rest of the Network to join adam!
-      shell: java -jar ~/run.dh256/dh256.jar 147.222.164.101:1776
+      shell: java -jar bin/dh256.jar  join 147.222.164.101:57005
+      args:
+         chdir: /home/cube/run.dh256/      
+- hosts: annex
+  gather_facts: no
+  tasks:
+    - name: Starting rest of the Network to join adam!
+      shell: java -jar bin/dh256.jar join 147.222.164.101:57005
+      args:
+         chdir: /home/cube/run.dh256/

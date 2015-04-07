@@ -12,4 +12,4 @@
        dest: ~/run.dh256
        owner: cube 
   - name: Compiling Launcher
-    shell: gcc -o dh256 launcher.c
+    shell: gcc -o ~/run.dh256/dh256 ~/run.dh256/launcher.c
