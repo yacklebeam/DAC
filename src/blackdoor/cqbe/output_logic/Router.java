@@ -31,8 +31,6 @@ import blackdoor.cqbe.rpc.ValueResult;
 import blackdoor.cqbe.rpc.RPCException.*;
 import blackdoor.cqbe.rpc.RPCValidator;
 
-import org.json.*;
-
 import blackdoor.cqbe.addressing.*;
 import blackdoor.net.SocketIOWrapper;
 import blackdoor.util.DBP;
@@ -351,11 +349,10 @@ public class Router {
 	 * along the way.
 	 * 
 	 * @param RPC
-	 * @return the consensus reply to RPC. Note: this is not the RPC response,
-	 *         but rather the JSON object in the "method" field of the response.
+	 * @return the consensus reply to RPC. 
 	 * @throws RPCException
 	 */
-	public JSONObject routeWithCalls(Object RPC) throws RPCException {
+	public RpcResponse routeWithCalls(Object RPC) throws RPCException {
 		return null;
 	}
 
@@ -363,8 +360,7 @@ public class Router {
 	 * Send a RPC to destination and return the reply
 	 * 
 	 * @param destination
-	 * @return the reply from destination. Note: this is not the RPC response,
-	 *         but rather the JSON object in the result or error field of the response.
+	 * @return the reply from destination. 
 	 *         TODO make make the return match the docs, or make the docs match the actual return
 	 * @throws RPCException
 	 * @throws IOException 
@@ -386,12 +382,10 @@ public class Router {
 	 * response.
 	 * 
 	 * @param destinations
-	 * @return the consensus reply to the RPC. Note: this is not the RPC
-	 *         response, but rather the JSON object in the result or error field of the
-	 *         response.
+	 * @return the consensus reply to the RPC. 
 	 * @throws RPCException
 	 */
-	public static JSONObject call(AddressTable destinations, Object RPC)
+	public static RpcResponse call(AddressTable destinations, Object RPC)
 			throws RPCException {
 		return null;
 	}
