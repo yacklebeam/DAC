@@ -2,5 +2,5 @@
 - hosts: picluster
   gather_facts: no
   tasks:
-    - name: Rebooting All Machines
-      fetch: src=~/run.dh256/log.log dest=../logs/ 
+    - name: Fetching Logs N' Stuff
+      fetch: src=~/run.dh256/log.log dest=../logs/

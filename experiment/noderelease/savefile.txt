@@ -1,0 +1,1 @@
+{"log_directory":"","storage_directory":"NodeStorage","bucket_number":3,"node_update_interval":5,"port":57006,"max_server_queue_size":256,"node_update_parallelism":8,"file_name_length":89,"save_file":"savefile.txt","default_address_size":16,"address_table_max_size":256,"server_rpc_buffer_size":64}

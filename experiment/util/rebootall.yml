@@ -1,6 +1,7 @@
 ---
 - hosts: picluster
   gather_facts: no
+  sudo: yes 
   tasks:
     - name: Rebooting All Machines
       shell: reboot
