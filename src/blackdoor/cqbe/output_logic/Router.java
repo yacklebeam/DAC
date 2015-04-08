@@ -274,19 +274,14 @@ public class Router {
 	}
 	
 	
-	private static Rpc getPut(Address destination, byte[] value){
+	private static Rpc getPut(Address destination, byte[] value) throws RPCException{
 		L3Address source = getSource();
 		RPCBuilder requestBuilder = new RPCBuilder();
-		try {
 			requestBuilder.setDestinationO(destination);
 			requestBuilder.setSourceIP(source.getLayer3Address());
 			requestBuilder.setSourcePort(source.getPort());
 			requestBuilder.setValue(value);
 			return requestBuilder.buildPutObject();
-		} catch (JSONException e) {
-			DBP.printException(e);
-		}
-		return null;
 	}
 	
 	/**
