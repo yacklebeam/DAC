@@ -7,13 +7,15 @@ import blackdoor.cqbe.addressing.Address.OverlayComparator;
 import blackdoor.cqbe.addressing.L3Address;
 import blackdoor.cqbe.node.server.Server;
 import blackdoor.cqbe.node.server.ServerException;
-
 import blackdoor.cqbe.settings.Config;
 import blackdoor.cqbe.storage.StorageController;
 import blackdoor.util.DBP;
+import blackdoor.util.DBP.SingletonAlreadyInitializedException;
 import blackdoor.cqbe.node.NodeException.*;
 
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.*;
 
 /**
@@ -21,7 +23,8 @@ import java.io.*;
  * @author nfischer3
  *
  */
-public class Node {
+public enum Node {
+	INSTANCE;
 
 	private static Node singleton;
 	private Server server;
@@ -56,7 +59,7 @@ public class Node {
 		return getInstance().me;
 	}
 
-	public Config getConfig() {
+	public static Config getConfig() {
 		return getInstance().config;
 	}
 
@@ -79,9 +82,6 @@ public class Node {
 
 		return new Address(c.getReferenceAddress());
 
-	}
-
-	protected Node() {
 	}
 
 	private void startServer(int port) throws ServerException {
@@ -132,8 +132,8 @@ public class Node {
 
 	public static void shutdown() {
 		Node inst = getInstance();
-		inst.server.stop();
 		inst.updater.stop();
+		inst.server.stop();
 	}
 
 	/**
@@ -153,6 +153,7 @@ public class Node {
 
 		private int port;
 		private String storageDir;
+		private String logDir;
 		private boolean daemon;
 		private boolean adam;
 		private L3Address bootstrapNode;
@@ -163,6 +164,9 @@ public class Node {
 		 */
 		public NodeBuilder() {
 			config = new Config(new File("default.config"));
+			this.setPort((int) config.get("port"));
+			this.setStorageDir((String) config.get("storage_directory"));
+			this.setLogDir((String) config.get("log_directory"));
 			daemon = false;
 			adam = false;
 		}
@@ -201,6 +205,7 @@ public class Node {
 
 			this.setPort((int) config.get("port"));
 			this.setStorageDir((String) config.get("storage_directory"));
+			this.setLogDir((String) config.get("log_directory"));
 		}
 
 		/**
@@ -226,27 +231,53 @@ public class Node {
 		public void setBootstrapNode(L3Address bootstrapNode) {
 			this.bootstrapNode = bootstrapNode;
 		}
+		
+		public void setLogDir(String logDir) {
+			this.logDir = logDir;
+			config.put("log_directory", logDir);
+		}
 
 		/**
 		 * Builds a node based on the current list of settings attributed to it.
 		 * TODO add and start updater
 		 * 
 		 * @throws ServerException
+		 * @throws SingletonAlreadyInitializedException 
+		 * @throws IOException 
 		 * 
 		 * @throws Exception
 		 */
-		public Node buildNode() throws NodeException, ServerException {
+		public Node buildNode() throws NodeException, ServerException, SingletonAlreadyInitializedException, IOException {
 			config.saveSessionToFile();
 			if (daemon) {
-				// TODO start a demon prossess depending on platform
+				List<String> commands = new ArrayList<String>();
+				commands.add("java");
+				commands.add("-jar");
+				commands.add("dh256.jar");
+				commands.add("join");
+				if (!adam && bootstrapNode != null) {
+					commands.add("-b");
+					commands.add(bootstrapNode.l3ToString());
+				}
+				else
+					commands.add("-a");
+				commands.add("-s");
+				commands.add((String) config.get("save_file"));
+				ProcessBuilder pb = new ProcessBuilder(commands);
+				pb.start();
+				return null;
 			}
-			Node node = new Node();
+			if (!logDir.equals(""))
+				DBP.setLogFileLocation(logDir);
+			Node.singleton = Node.INSTANCE;// node = new Node();
+			Node node = Node.INSTANCE;
 			node.configureAddressing(port);
 			node.storageController = new StorageController(new File(
 					this.storageDir).toPath(), node.addressTable);
 			if (!adam && bootstrapNode != null) {
 				node.addressTable.add(bootstrapNode);
 			}
+			node.config = config;
 			Node.singleton = node;
 			node.startServer(port);
 			node.startUpdater();
