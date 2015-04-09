@@ -33,6 +33,7 @@ public class IndexResult extends JSONRPCResult {
 	
 	private Set<Address> index;
 
+
 	public IndexResult(Set<Address> addresses) {
 		super(ResultType.INDEX);
 		this.index = addresses;

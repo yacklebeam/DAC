@@ -37,8 +37,10 @@ public class CLITester {
 		//String[] args2 = {"insert","lol_file.txt","-b","localhost:1778"};
 //String[] args2 = {"join","-a", "-p", "1778"};
 		
-//		String[] args2 = {"join", address.getHostAddress() + ":1778","-p","1779"};
-//		String[] args2 = {"join", address.getHostAddress() + ":1778","-p","1780"};
+
+		//String[] args2 = {"join", address.getHostAddress() + ":1778","-p","1779"};
+		//String[] args2 = {"join", address.getHostAddress() + ":1778","-p","1780"};
+
 		//String[] args2 = {"join", address.getHostAddress() + ":1778","-p","1781"};
 		//String[] args2 = {"join", address.getHostAddress() + ":1778","-p","1782"};
 		String[] args2 = {"join", address.getHostAddress() + ":1778","-p","1783"};

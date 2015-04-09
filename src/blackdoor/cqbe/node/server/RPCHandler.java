@@ -2,7 +2,6 @@ package blackdoor.cqbe.node.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
@@ -15,7 +14,6 @@ import blackdoor.cqbe.rpc.IndexResult;
 import blackdoor.cqbe.rpc.PongResult;
 import blackdoor.cqbe.rpc.PutRpc;
 import blackdoor.cqbe.rpc.GetRpc;
-import blackdoor.cqbe.rpc.RPCBuilder;
 import blackdoor.cqbe.rpc.RPCException;
 import blackdoor.cqbe.rpc.TableResult;
 import blackdoor.cqbe.rpc.ValueResult;
@@ -23,15 +21,9 @@ import blackdoor.cqbe.rpc.RPCException.JSONRPCError;
 import blackdoor.cqbe.rpc.ResultRpcResponse;
 import blackdoor.cqbe.rpc.Rpc;
 import blackdoor.cqbe.rpc.RpcResponse;
-import blackdoor.cqbe.rpc.ShutdownRpc;
 import blackdoor.cqbe.storage.StorageController;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.sun.org.apache.xml.internal.security.utils.Base64;
-
 import blackdoor.cqbe.addressing.Address;
 import blackdoor.cqbe.addressing.AddressException;
 import blackdoor.cqbe.addressing.AddressTable;
@@ -331,8 +323,9 @@ public class RPCHandler {
 		System.out.println("Shutting down node.");
 		long mark = System.nanoTime();
 		Node.shutdown();
-		while (System.nanoTime() - mark < Server.TIMEOUT * 1000000000)
-			;
+
+		while(System.nanoTime() - mark < Server.TIMEOUT * 1000000000);
+
 		System.exit(0);
 	}
 
