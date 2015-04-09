@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.util.NavigableSet;
+import java.util.Random;
 
 import blackdoor.cqbe.rpc.AckResponse;
 import blackdoor.cqbe.rpc.PutRpc;
@@ -46,21 +47,20 @@ import blackdoor.util.DBP;
 public class RPCHandler {
 
 	private JSONObject rpc;
+	private SocketIOWrapper io;
 	private String errorData = null;
-	private SocketIOWrapper io; 
 
-	public RPCHandler(JSONObject rpc, SocketIOWrapper io) {
+	public RPCHandler(SocketIOWrapper outy, JSONObject rpc) {
 		this.rpc = rpc;
-		this.io = io;
+		this.io = outy;
 	}
 
 	/**
 	 * Handles appropriate RPC call
-	 * @return 
 	 * 
 	 * @throws IOException
 	 */
-	public JSONObject handle() throws IOException {
+	public void handle() throws IOException {
 
 		JSONObject responseObject;
 		try {
@@ -81,8 +81,9 @@ public class RPCHandler {
 				break;
 			case SHUTDOWN:
 				handleShutdown();
-				return null;
+				return;
 			default:
+				io.close();
 				throw new RuntimeException(
 						"WTF IS THISSSS??? I'm looking at a method type that I don't recognize! WHERE is the validator? Is it on vacation? Cause it's not validating!");
 			}
@@ -90,7 +91,7 @@ public class RPCHandler {
 			DBP.printException(j);
 			DBP.printerrorln("Apparently the RPC validator is broken");
 			DBP.printerrorln("A JSON-RPC response is not being sent, better fix the validator");
-			return null;
+			return;
 		} catch (AddressException a) {
 			DBP.printException(a);
 			responseObject = RPCBuilder.RPCResponseFactory(rpc.getInt("id"),
@@ -111,10 +112,16 @@ public class RPCHandler {
 					RPCException.JSONRPCError.INVALID_ADDRESS_FORMAT);
 			DBP.printException(e);
 		}
+
+
+		try {
 			// DBP.printdevln("in handle");
 			// DBP.printdevln("about to write response " + responseObject);
 
-		return responseObject;
+			io.write(responseObject.toString());
+		} finally {
+			io.close();
+		}
 	}
 
 	/**
@@ -304,14 +311,19 @@ public class RPCHandler {
 				|| !sock.getLocalAddress().isLoopbackAddress()) {
 			throw new RPCException(JSONRPCError.NON_LO_SHUTDOWN);
 		}
-		io.write(ShutdownRpc.CHALLENGE);
+		int challenge = new Random().nextInt();
+		io.write(challenge);
 		String handshake = io.read();
-		if (!handshake.equals(ShutdownRpc.HANDSHAKE)) {
+		if (!handshake.equals(String.valueOf(challenge))) {
 			DBP.printerrorln("Shutdown request was recieved but sender was unable to handshake. "
 					+ "It is possible that this was an attempted loopback spoofing attack.");
 			return;
 		}
+		System.out.println("Shutting down node.");
+		long mark = System.nanoTime();
 		Node.shutdown();
+		while(System.nanoTime() - mark < Server.TIMEOUT * 1000000000);
+		System.exit(0);
 	}
 
 }

@@ -14,6 +14,8 @@ import blackdoor.util.DBP.SingletonAlreadyInitializedException;
 import blackdoor.cqbe.node.NodeException.*;
 
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.*;
 
 /**
@@ -21,7 +23,8 @@ import java.io.*;
  * @author nfischer3
  *
  */
-public class Node {
+public enum Node {
+	INSTANCE;
 
 	private static Node singleton;
 	private Server server;
@@ -81,9 +84,6 @@ public class Node {
 
 	}
 
-	protected Node() {
-	}
-
 	private void startServer(int port) throws ServerException {
 		server = new Server(port);
 		serverThread = new Thread(server);
@@ -132,8 +132,8 @@ public class Node {
 
 	public static void shutdown() {
 		Node inst = getInstance();
-		inst.server.stop();
 		inst.updater.stop();
+		inst.server.stop();
 	}
 
 	/**
@@ -243,17 +243,34 @@ public class Node {
 		 * 
 		 * @throws ServerException
 		 * @throws SingletonAlreadyInitializedException 
+		 * @throws IOException 
 		 * 
 		 * @throws Exception
 		 */
-		public Node buildNode() throws NodeException, ServerException, SingletonAlreadyInitializedException {
+		public Node buildNode() throws NodeException, ServerException, SingletonAlreadyInitializedException, IOException {
 			config.saveSessionToFile();
 			if (daemon) {
-				// TODO start a demon prossess depending on platform
+				List<String> commands = new ArrayList<String>();
+				commands.add("java");
+				commands.add("-jar");
+				commands.add("dh256.jar");
+				commands.add("join");
+				if (!adam && bootstrapNode != null) {
+					commands.add("-b");
+					commands.add(bootstrapNode.l3ToString());
+				}
+				else
+					commands.add("-a");
+				commands.add("-s");
+				commands.add((String) config.get("save_file"));
+				ProcessBuilder pb = new ProcessBuilder(commands);
+				pb.start();
+				return null;
 			}
 			if (!logDir.equals(""))
 				DBP.setLogFileLocation(logDir);
-			Node node = new Node();
+			Node.singleton = Node.INSTANCE;// node = new Node();
+			Node node = Node.INSTANCE;
 			node.configureAddressing(port);
 			node.storageController = new StorageController(new File(
 					this.storageDir).toPath(), node.addressTable);
