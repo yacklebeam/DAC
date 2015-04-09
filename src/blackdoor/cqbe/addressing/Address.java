@@ -6,6 +6,7 @@ import blackdoor.util.Misc;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Comparator;
 import java.util.StringTokenizer;
 
@@ -15,7 +16,7 @@ import java.util.StringTokenizer;
  * This class is the superclass of all addresses that might be encountered in an overlay network.
  * That is, all addresses have an overlay address.
  */
-public class Address implements Serializable {
+public class Address implements Serializable{
 
     /**
      * The size of an overlay address, in bytes.
@@ -170,6 +171,16 @@ public class Address implements Serializable {
     public String toString(){
         return overlayAddressToString();
     }
+    
+    public enum NaturalByteArrayComparator implements Comparator<byte[]>{
+		INSTANCE;
+
+		@Override
+		public int compare(byte[] arg0, byte[] arg1) {
+			return new BigInteger(arg0).compareTo(new BigInteger(arg1));
+		}
+    	
+    }
 
 	public static class OverlayComparator implements Comparator<byte[]> {
         private byte[] ref;
@@ -220,6 +231,13 @@ public class Address implements Serializable {
         }
     }
 
+	public Address getComplement(){
+		BitSet a = new BitSet();
+		a = BitSet.valueOf(this.getOverlayAddress());
+		a.xor(BitSet.valueOf(Address.getFullOverlay()));
+		return new Address(a.toByteArray());
+	}
+	
 	/**
 	 * A comparator for Addresses. Distance between Addresses is defined as the Hamming weight of the first address XOR'd with the second.
 	 * Since two addresses can only have a distance between them a reference point is needed to determine which is greater than the other.

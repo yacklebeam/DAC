@@ -15,7 +15,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import blackdoor.cqbe.settings.Config.ConfigReadOnly;
+import blackdoor.cqbe.settings.Config;
+import blackdoor.cqbe.settings.ConfigurationException.ConfigFileNotFoundException;
 import blackdoor.util.DBP;
 
 
@@ -26,7 +27,17 @@ import blackdoor.util.DBP;
  * @version v1.0.0 - Nov 19, 2014
  */
 public class AddressTable extends ConcurrentSkipListMap<byte[], L3Address> implements Serializable, Iterable<L3Address> {
-	public static final int DEFAULT_MAX_SIZE = (int) ConfigReadOnly.get("default.config", "address_table_max_size");
+
+	public static final int DEFAULT_MAX_SIZE;
+	static{
+		int temp;
+		try{
+			temp = (int) Config.getReadOnly("address_table_max_size", "default.config");
+		}catch(ConfigFileNotFoundException e){
+			temp = 128;
+		}
+		DEFAULT_MAX_SIZE = temp;
+	}
 	
 	private int maxSize = DEFAULT_MAX_SIZE;
 
@@ -34,7 +45,8 @@ public class AddressTable extends ConcurrentSkipListMap<byte[], L3Address> imple
 	 * Constructs an AddressTable which will sort entries based on their distance to Address.nullOverlay
 	 */
 	public AddressTable() {
-		this(Address.getNullAddress());
+		super(Address.NaturalByteArrayComparator.INSTANCE);
+		setMaxSize(Integer.MAX_VALUE);
 	}
 
 	/**
@@ -46,6 +58,9 @@ public class AddressTable extends ConcurrentSkipListMap<byte[], L3Address> imple
 	}
 
 	public Address getReferenceAddress(){
+		if(comparator() == Address.NaturalByteArrayComparator.INSTANCE){
+			return Address.getNullAddress();
+		}
 		Address.OverlayComparator c = (Address.OverlayComparator) comparator();
 		return new Address(c.getReferenceAddress());
 	}
