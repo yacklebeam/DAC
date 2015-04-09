@@ -12,11 +12,7 @@ public class TableResult extends JSONRPCResult {
 	
 	private AddressTable table;
 
-<<<<<<< HEAD
 	public TableResult(AddressTable table) {
-=======
-	protected TableResult(AddressTable table) {
->>>>>>> master
 		super(ResultType.AT);
 		this.table = table;
 	}
